@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Real-Time Chat Demo</title>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+<h2>WebSocket Chat Demo</h2>
+<input id="chatId" type="number" placeholder="Chat ID"/>
+<input id="senderId" type="number" placeholder="Sender ID"/>
+<input id="message" type="text" placeholder="Message"/>
+<button onclick="connect()">Connect</button>
+<button onclick="send()">Send</button>
+<div id="messages"></div>
+<script>
+  let stompClient;
+
+  function connect() {
+    const socket = new SockJS('/ws');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, () => {
+      const chatId = document.getElementById('chatId').value;
+      stompClient.subscribe('/topic/messages/' + chatId, (m) => {
+        const body = JSON.parse(m.body);
+        document.getElementById('messages').innerHTML += `<p><b>${body.senderId}</b>: ${body.content}</p>`;
+      });
+    });
+  }
+
+  function send() {
+    const payload = {
+      chatId: Number(document.getElementById('chatId').value),
+      senderId: Number(document.getElementById('senderId').value),
+      content: document.getElementById('message').value
+    };
+    stompClient.send('/app/chat.send', {}, JSON.stringify(payload));
+  }
+</script>
+</body>
+</html>
