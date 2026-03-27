@@ -24,10 +24,21 @@ Production-oriented backend starter inspired by **WhatsApp + Instagram + Snapcha
 - `websocket` STOMP handlers
 - `exception` global error handler
 
+
+## Run in Eclipse
+1. Use **JDK 17+** for the project (this project is configured for Java 17).
+2. Import as Maven project: **File -> Import -> Maven -> Existing Maven Projects**.
+3. Right-click project -> **Maven -> Update Project** (force update).
+4. Run the main class **`com.example.chatapp.ChatApplication`** (note the exact package spelling: `example`, not `exmple`).
+5. If Eclipse still shows `ClassNotFoundException`, delete the old run configuration and create a new one:
+   - **Run Configurations -> Spring Boot App -> New**
+   - Project: `realtime-chat-app`
+   - Main type: `com.example.chatapp.ChatApplication`
+
 ## Run Locally
 ```bash
 docker compose up -d mysql redis
-./mvnw spring-boot:run
+mvn spring-boot:run
 ```
 Or build image:
 ```bash
