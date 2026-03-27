@@ -37,8 +37,23 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
+        return isAccessTokenValid(token, userDetails);
+    }
+
+    public boolean isAccessTokenValid(String token, UserDetails userDetails) {
+        return isTokenValid(token, userDetails, "access");
+    }
+
+    public boolean isRefreshTokenValid(String token, UserDetails userDetails) {
+        return isTokenValid(token, userDetails, "refresh");
+    }
+
+    private boolean isTokenValid(String token, UserDetails userDetails, String expectedType) {
         Claims claims = parseClaims(token);
-        return claims.getSubject().equals(userDetails.getUsername()) && claims.getExpiration().after(new Date());
+        String tokenType = claims.get("type", String.class);
+        return claims.getSubject().equals(userDetails.getUsername())
+                && claims.getExpiration().after(new Date())
+                && expectedType.equals(tokenType);
     }
 
     private String buildToken(String subject, long expirationMs, Map<String, Object> claims) {
