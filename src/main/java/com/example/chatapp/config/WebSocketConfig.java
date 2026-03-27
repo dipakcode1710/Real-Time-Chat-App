@@ -68,16 +68,20 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     throw new AccessDeniedException("Missing or invalid Authorization header");
                 }
 
-                String token = authHeader.substring(7);
-                String username = jwtService.extractUsername(token);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                if (!jwtService.isAccessTokenValid(token, userDetails)) {
+                try {
+                    String token = authHeader.substring(7);
+                    String username = jwtService.extractUsername(token);
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    if (!jwtService.isAccessTokenValid(token, userDetails)) {
+                        throw new AccessDeniedException("Invalid access token");
+                    }
+
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    accessor.setUser(authentication);
+                } catch (RuntimeException ex) {
                     throw new AccessDeniedException("Invalid access token");
                 }
-
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                accessor.setUser(authentication);
             }
         });
     }
