@@ -72,7 +72,7 @@ public class AuthService {
     public AuthResponse refresh(RefreshTokenRequest request) {
         String username = jwtService.extractUsername(request.getRefreshToken());
         UserDetails details = userDetailsService.loadUserByUsername(username);
-        if (!jwtService.isTokenValid(request.getRefreshToken(), details)) {
+        if (!jwtService.isRefreshTokenValid(request.getRefreshToken(), details)) {
             throw new ApiException("Invalid refresh token");
         }
         return AuthResponse.builder()
