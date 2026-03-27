@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/chat_app?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+server:
+  port: 8080
+
+app:
+  jwt:
+    secret: c3VwZXJzZWNyZXRzdXBlcnNlY3JldHN1cGVyc2VjcmV0c3VwZXJzZWNyZXQ=
+    access-expiration-ms: 900000
+    refresh-expiration-ms: 2592000000
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
