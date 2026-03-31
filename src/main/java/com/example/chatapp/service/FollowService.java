@@ -15,6 +15,9 @@ public class FollowService {
     private final UserRepository userRepository;
 
     public Follow follow(Long followerId, Long followingId) {
+        if (followerId.equals(followingId)) {
+            throw new ApiException("Users cannot follow themselves");
+        }
         var follower = userRepository.findById(followerId).orElseThrow(() -> new ApiException("Follower not found"));
         var following = userRepository.findById(followingId).orElseThrow(() -> new ApiException("Following user not found"));
 

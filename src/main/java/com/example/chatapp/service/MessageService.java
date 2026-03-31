@@ -23,8 +23,16 @@ public class MessageService {
     public MessageResponse saveMessage(MessageRequest request) {
         Chat chat = chatRepository.findById(request.getChatId()).orElseThrow(() -> new ApiException("Chat not found"));
         User sender = userRepository.findById(request.getSenderId()).orElseThrow(() -> new ApiException("Sender not found"));
+        boolean isParticipant = chat.getParticipants().stream()
+                .anyMatch(participant -> participant.getId().equals(sender.getId()));
+        if (!isParticipant) {
+            throw new ApiException("Sender is not a participant of this chat");
+        }
         Media media = request.getMediaId() == null ? null : mediaRepository.findById(request.getMediaId()).orElse(null);
         Message replyTo = request.getReplyToMessageId() == null ? null : messageRepository.findById(request.getReplyToMessageId()).orElse(null);
+        if (replyTo != null && !replyTo.getChat().getId().equals(chat.getId())) {
+            throw new ApiException("Reply target must belong to the same chat");
+        }
 
         Message message = Message.builder()
                 .chat(chat)
