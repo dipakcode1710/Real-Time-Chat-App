@@ -32,7 +32,7 @@ public class ChatWebSocketController {
         request.setSenderId(authenticatedUserId);
         MessageResponse saved = messageService.saveMessage(request);
         messagingTemplate.convertAndSend("/topic/messages/" + request.getChatId(), saved);
-        messagingTemplate.convertAndSendToUser(String.valueOf(authenticatedUserId), "/queue/private", saved);
+        messagingTemplate.convertAndSendToUser(principal.getName(), "/queue/private", saved);
         notificationService.createNotification(authenticatedUserId, "NEW_MESSAGE", "Message sent in chat " + request.getChatId());
     }
 
